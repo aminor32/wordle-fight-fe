@@ -1,20 +1,25 @@
 import Block from "@/components/Block";
 import { status } from "@/utils/type";
 
-const Word: React.FC = () => {
+interface WordProps {
+  word: string;
+}
+
+const Word: React.FC<WordProps> = ({ word }) => {
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "center",
+        marginBottom: "5px",
         gap: "6px 6px",
       }}
     >
-      <Block char="A" stat={status.none} />
-      <Block char="D" stat={status.hit} />
-      <Block char="I" stat={status.miss} />
-      <Block char="E" stat={status.ball} />
-      <Block char="U" stat={status.ball} />
+      <Block char={word[0] || ""} stat={status.none} />
+      <Block char={word[1] || ""} stat={status.none} />
+      <Block char={word[2] || ""} stat={status.none} />
+      <Block char={word[3] || ""} stat={status.none} />
+      <Block char={word[4] || ""} stat={status.none} />
     </div>
   );
 };

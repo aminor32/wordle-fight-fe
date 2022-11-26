@@ -17,9 +17,9 @@ const Block: React.FC<BlockProps> = ({ char, stat }) => {
         height: "48px",
         border: `2px solid ${
           stat == status.none && char
-            ? colorSet.lightGray
-            : stat == status.none
             ? colorSet.darkGray
+            : stat == status.none
+            ? colorSet.lightGray
             : stat == status.hit
             ? colorSet.green
             : stat == status.ball
@@ -40,11 +40,11 @@ const Block: React.FC<BlockProps> = ({ char, stat }) => {
         style={{
           margin: 0,
           fontFamily: "Noto Sans",
-          fontWeight: 700,
+          fontWeight: "Bold",
           color: stat == status.none ? colorSet.black : colorSet.white,
         }}
       >
-        {char}
+        {char.toUpperCase()}
       </p>
     </div>
   );
