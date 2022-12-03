@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { currentWordAtom, websocketAtom } from "@/utils/atom";
+import { connectedAtom, currentWordAtom, websocketAtom } from "@/utils/atom";
 import { colorSet } from "@/utils/color";
 import { Message, messageType } from "@/utils/type";
 
@@ -9,12 +9,13 @@ interface FunctionKeyProps {
 
 const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   const [websocket] = useAtom(websocketAtom);
+  const [connected] = useAtom(connectedAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
   const onKeyClick: React.MouseEventHandler = () => {
     switch (func) {
       case "enter":
-        if (websocket.readyState === websocket.OPEN) {
+        if (currentWord.length === 5 && connected) {
           const message: Message = {
             type: messageType.guess,
             data: currentWord,
