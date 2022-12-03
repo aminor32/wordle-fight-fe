@@ -1,5 +1,5 @@
-import { status, Status } from "@/utils/type";
 import { colorSet } from "@/utils/color";
+import { status, Status } from "@/utils/type";
 
 interface BlockProps {
   char: string;

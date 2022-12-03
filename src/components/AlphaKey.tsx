@@ -1,7 +1,7 @@
+import { useAtom } from "jotai";
 import { currentWordAtom } from "@/utils/atom";
 import { colorSet } from "@/utils/color";
 import { status, Status } from "@/utils/type";
-import { useAtom } from "jotai";
 
 interface AlphaKeyProps {
   char: string;
