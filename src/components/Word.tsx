@@ -3,9 +3,10 @@ import { status } from "@/utils/type";
 
 interface WordProps {
   word: string;
+  result?: number[];
 }
 
-const Word: React.FC<WordProps> = ({ word }) => {
+const Word: React.FC<WordProps> = ({ word, result }) => {
   return (
     <div
       style={{

@@ -1,26 +1,26 @@
+import { useAtom } from "jotai";
 import AlphaKey from "@/components/AlphaKey";
 import FunctionKey from "@/components/FunctionKey";
 import Word from "@/components/Word";
-import { currentWordAtom, wordsAtom } from "@/utils/atom";
-import { status } from "@/utils/type";
-import { useAtom } from "jotai";
+import { currentWordAtom, resultsAtom, websocketAtom } from "@/utils/atom";
+import { Message, messageType, status } from "@/utils/type";
 
-const GamePage: React.FC = () => {
-  const [words] = useAtom(wordsAtom);
+const PlayPage: React.FC = () => {
+  const [results] = useAtom(resultsAtom);
   const [currentWord] = useAtom(currentWordAtom);
 
   return (
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      {words.map((word) => (
-        <Word word={word} key={word} />
+      {results.map((result) => (
+        <Word word={result.word} result={result.result} key={result.word} />
       ))}
 
       <Word word={currentWord} />
 
-      {words.length < 5
-        ? [...Array(5 - words.length).keys()].map((n) => (
+      {results.length < 5
+        ? [...Array(5 - results.length).keys()].map((n) => (
             <Word word="" key={n} />
           ))
         : null}
@@ -65,4 +65,4 @@ const GamePage: React.FC = () => {
   );
 };
 
-export default GamePage;
+export default PlayPage;

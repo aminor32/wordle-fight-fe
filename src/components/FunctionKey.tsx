@@ -1,20 +1,28 @@
-import { currentWordAtom } from "@/utils/atom";
-import { colorSet } from "@/utils/color";
 import { useAtom } from "jotai";
+import { currentWordAtom, websocketAtom } from "@/utils/atom";
+import { colorSet } from "@/utils/color";
+import { Message, messageType } from "@/utils/type";
 
 interface FunctionKeyProps {
   func: string;
 }
 
 const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
-  const [, setCurrentWord] = useAtom(currentWordAtom);
+  const [websocket] = useAtom(websocketAtom);
+  const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
-  const onKeyClick: React.MouseEventHandler = async () => {
+  const onKeyClick: React.MouseEventHandler = () => {
     switch (func) {
       case "enter":
-        // 1. 단어인지 검사
-        // 2. 단어라면 웹소켓으로 요청 보내기
-        // 3. 단어가 아니라면 다시 입력하도록 할 것 (비우지는 않음)
+        if (websocket.readyState === websocket.OPEN) {
+          const message: Message = {
+            type: messageType.guess,
+            data: currentWord,
+          };
+
+          websocket.send(JSON.stringify(message));
+        }
+
         break;
 
       case "del":
