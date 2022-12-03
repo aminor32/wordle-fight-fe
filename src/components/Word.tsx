@@ -16,11 +16,21 @@ const Word: React.FC<WordProps> = ({ word, result }) => {
         gap: "6px 6px",
       }}
     >
-      <Block char={word[0] || ""} stat={status.none} />
-      <Block char={word[1] || ""} stat={status.none} />
-      <Block char={word[2] || ""} stat={status.none} />
-      <Block char={word[3] || ""} stat={status.none} />
-      <Block char={word[4] || ""} stat={status.none} />
+      {[...Array(5).keys()].map((i) => (
+        <Block
+          char={word[i] || ""}
+          stat={
+            result
+              ? result[i] === 0
+                ? status.miss
+                : result[i] === 1
+                ? status.ball
+                : status.hit
+              : status.none
+          }
+          key={word + i}
+        />
+      ))}
     </div>
   );
 };

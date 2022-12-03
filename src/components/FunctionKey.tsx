@@ -1,7 +1,13 @@
 import { useAtom } from "jotai";
-import { connectedAtom, currentWordAtom, websocketAtom } from "@/utils/atom";
+import {
+  answerAtom,
+  connectedAtom,
+  currentWordAtom,
+  websocketAtom,
+} from "@/utils/atom";
 import { colorSet } from "@/utils/color";
-import { Message, messageType } from "@/utils/type";
+import { Message, messageType, Result } from "@/utils/type";
+import { wordCheck } from "@/utils/util";
 
 interface FunctionKeyProps {
   func: string;
@@ -10,15 +16,20 @@ interface FunctionKeyProps {
 const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   const [websocket] = useAtom(websocketAtom);
   const [connected] = useAtom(connectedAtom);
+  const [answer] = useAtom(answerAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
   const onKeyClick: React.MouseEventHandler = () => {
     switch (func) {
       case "enter":
         if (currentWord.length === 5 && connected) {
+          const guess: Result = {
+            word: currentWord,
+            result: wordCheck(currentWord, answer),
+          };
           const message: Message = {
             type: messageType.guess,
-            data: currentWord,
+            data: JSON.stringify(guess),
           };
 
           websocket.send(JSON.stringify(message));

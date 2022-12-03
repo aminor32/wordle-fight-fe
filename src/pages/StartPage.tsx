@@ -1,14 +1,55 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import Block from "@/components/Block";
-import { websocketAtom } from "@/utils/atom";
+import {
+  answerAtom,
+  connectedAtom,
+  currentWordAtom,
+  resultsAtom,
+  websocketAtom,
+} from "@/utils/atom";
 import { useSetWebsocketEventHandler } from "@/utils/hook";
 import { Message, messageType, Result, status } from "@/utils/type";
+import { wordCheck } from "@/utils/util";
+import { useNavigate } from "react-router";
 
 const StartPage: React.FC = () => {
   const [websocket] = useAtom(websocketAtom);
+  const [button, setButton] = useState(false);
+  const [, setConnected] = useAtom(connectedAtom);
+  const [, setResults] = useAtom(resultsAtom);
+  const [answer, setAnswer] = useAtom(answerAtom);
+  const [currentWord] = useAtom(currentWordAtom);
+  const navigate = useNavigate();
 
-  useSetWebsocketEventHandler();
+  useEffect(() => {
+    // set websocket event listener
+    websocket.onopen = () => {
+      setConnected(true);
+    };
+
+    websocket.onclose = () => {
+      setConnected(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
+      const message: Message = JSON.parse(event.data);
+
+      if (message.type == messageType.match && message.data) {
+        // set answer word
+        setAnswer(message.data);
+        navigate("/play");
+      }
+    };
+
+    websocket.addEventListener("message", messageHandler);
+
+    return () => {
+      websocket.removeEventListener("message", messageHandler);
+    };
+  }, []);
 
   const onPlayClick = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -20,6 +61,7 @@ const StartPage: React.FC = () => {
       };
 
       websocket.send(JSON.stringify(matchMessage));
+      setButton(true);
     }
   };
 
@@ -34,6 +76,7 @@ const StartPage: React.FC = () => {
     >
       <button
         onClick={onPlayClick}
+        disabled={button}
         style={{ border: "none", background: "none" }}
       >
         <div

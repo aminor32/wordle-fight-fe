@@ -8,4 +8,4 @@ export const websocketAtom = atom<WebSocket>(
 export const connectedAtom = atom<boolean>(false);
 export const currentWordAtom = atom<string>("");
 export const resultsAtom = atom<Result[]>([]);
-export const answerAtom = atom<String>("");
+export const answerAtom = atom<string>("");
