@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAtom } from "jotai";
 import AlphaKey from "@/components/AlphaKey";
 import FunctionKey from "@/components/FunctionKey";
@@ -6,21 +5,9 @@ import Word from "@/components/Word";
 import { currentWordAtom, resultsAtom, websocketAtom } from "@/utils/atom";
 import { Message, messageType, status } from "@/utils/type";
 
-const GamePage: React.FC = () => {
-  const [websocket] = useAtom(websocketAtom);
+const PlayPage: React.FC = () => {
   const [results] = useAtom(resultsAtom);
   const [currentWord] = useAtom(currentWordAtom);
-
-  useEffect(() => {
-    if (websocket.readyState === websocket.OPEN) {
-      const matchMessage: Message = {
-        type: messageType.match,
-        data: "",
-      };
-
-      websocket.send(JSON.stringify(matchMessage));
-    }
-  }, [websocket.readyState]);
 
   return (
     <div
@@ -78,4 +65,4 @@ const GamePage: React.FC = () => {
   );
 };
 
-export default GamePage;
+export default PlayPage;
