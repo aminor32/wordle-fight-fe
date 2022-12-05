@@ -3,6 +3,7 @@ import {
   answerAtom,
   connectedAtom,
   currentWordAtom,
+  turnAtom,
   websocketAtom,
 } from "@/utils/atom";
 import { colorSet } from "@/utils/color";
@@ -16,6 +17,7 @@ interface FunctionKeyProps {
 const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   const [websocket] = useAtom(websocketAtom);
   const [connected] = useAtom(connectedAtom);
+  const [turn] = useAtom(turnAtom);
   const [answer] = useAtom(answerAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
@@ -49,6 +51,7 @@ const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   return (
     <button
       onClick={onKeyClick}
+      disabled={!turn}
       style={{
         width: "65px",
         height: "58px",

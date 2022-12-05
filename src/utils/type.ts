@@ -11,6 +11,7 @@ export const messageType = {
   match: "match",
   guess: "guess",
   result: "result",
+  turn: "turn",
 } as const;
 
 export interface Message {

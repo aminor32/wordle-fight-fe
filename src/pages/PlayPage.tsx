@@ -8,6 +8,7 @@ import {
   connectedAtom,
   currentWordAtom,
   resultsAtom,
+  turnAtom,
   websocketAtom,
 } from "@/utils/atom";
 import { Message, messageType, Result, status } from "@/utils/type";
@@ -25,6 +26,7 @@ const PlayPage: React.FC = () => {
   const [results, setResults] = useAtom(resultsAtom);
   const [answer] = useAtom(answerAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
+  const [turn, setTurn] = useAtom(turnAtom);
   const [keyboard, setKeyboard] = useState<{ [key: string]: number }>({
     a: -1,
     b: -1,
@@ -113,6 +115,10 @@ const PlayPage: React.FC = () => {
           });
 
           break;
+
+        case messageType.turn:
+          console.log(message.data);
+          setTurn(!!message.data);
       }
     };
 
@@ -127,23 +133,25 @@ const PlayPage: React.FC = () => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
       event.preventDefault();
 
-      const key = event.key;
+      if (turn) {
+        const key = event.key;
 
-      if (alphabet.includes(key) && currentWord.length < 5) {
-        setCurrentWord((prev) => prev + key);
-      } else if (key === "Enter" && currentWord.length === 5 && connected) {
-        const guess: Result = {
-          word: currentWord,
-          result: wordCheck(currentWord, answer),
-        };
-        const message: Message = {
-          type: messageType.guess,
-          data: JSON.stringify(guess),
-        };
+        if (alphabet.includes(key) && currentWord.length < 5) {
+          setCurrentWord((prev) => prev + key);
+        } else if (key === "Enter" && currentWord.length === 5 && connected) {
+          const guess: Result = {
+            word: currentWord,
+            result: wordCheck(currentWord, answer),
+          };
+          const message: Message = {
+            type: messageType.guess,
+            data: JSON.stringify(guess),
+          };
 
-        websocket.send(JSON.stringify(message));
-      } else if (key == "Backspace") {
-        setCurrentWord((prev) => prev.slice(0, -1));
+          websocket.send(JSON.stringify(message));
+        } else if (key == "Backspace") {
+          setCurrentWord((prev) => prev.slice(0, -1));
+        }
       }
     };
 
@@ -152,7 +160,7 @@ const PlayPage: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", keyboardEventHandler);
     };
-  }, [currentWord, connected]);
+  }, [turn, currentWord, connected]);
 
   return (
     <div

@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { useAtom } from "jotai";
 import Block from "@/components/Block";
 import {
   answerAtom,
   connectedAtom,
-  currentWordAtom,
-  resultsAtom,
+  turnAtom,
   websocketAtom,
 } from "@/utils/atom";
-import { useSetWebsocketEventHandler } from "@/utils/hook";
-import { Message, messageType, Result, status } from "@/utils/type";
-import { wordCheck } from "@/utils/util";
-import { useNavigate } from "react-router";
+import { Message, messageType, status } from "@/utils/type";
 
 const StartPage: React.FC = () => {
   const [websocket] = useAtom(websocketAtom);
+  const [, setTurn] = useAtom(turnAtom);
   const [button, setButton] = useState(false);
   const [, setConnected] = useAtom(connectedAtom);
-  const [, setResults] = useAtom(resultsAtom);
-  const [answer, setAnswer] = useAtom(answerAtom);
-  const [currentWord] = useAtom(currentWordAtom);
+  const [, setAnswer] = useAtom(answerAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,10 +33,21 @@ const StartPage: React.FC = () => {
     const messageHandler = (event: MessageEvent) => {
       const message: Message = JSON.parse(event.data);
 
-      if (message.type == messageType.match && message.data) {
-        // set answer word
-        setAnswer(message.data);
-        navigate("/play");
+      switch (message.type) {
+        case messageType.match:
+          if (message.data) {
+            // set answer word
+            setAnswer(message.data);
+            navigate("/play");
+          }
+
+          break;
+
+        case messageType.turn:
+          console.log(message.data);
+          setTurn(!!message.data);
+
+          break;
       }
     };
 
