@@ -1,38 +1,60 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAtom } from "jotai";
-import { answerAtom, resultsAtom, websocketAtom } from "@/utils/atom";
-import { Message, messageType, Result, status } from "@/utils/type";
 import Block from "@/components/Block";
+import {
+  answerAtom,
+  connectedAtom,
+  turnAtom,
+  websocketAtom,
+} from "@/utils/atom";
+import { Message, messageType, status } from "@/utils/type";
 
 const StartPage: React.FC = () => {
   const [websocket] = useAtom(websocketAtom);
-  const [, setResults] = useAtom(resultsAtom);
+  const [, setTurn] = useAtom(turnAtom);
+  const [button, setButton] = useState(false);
+  const [, setConnected] = useAtom(connectedAtom);
   const [, setAnswer] = useAtom(answerAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
     // set websocket event listener
-    websocket.onmessage = (event) => {
+    websocket.onopen = () => {
+      setConnected(true);
+    };
+
+    websocket.onclose = () => {
+      setConnected(false);
+    };
+  }, []);
+
+  useEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
       const message: Message = JSON.parse(event.data);
 
       switch (message.type) {
         case messageType.match:
-          // set answer word
-          setAnswer(message.data);
-          navigate("/play");
+          if (message.data) {
+            // set answer word
+            setAnswer(message.data);
+            navigate("/play");
+          }
+
           break;
 
-        case messageType.guess:
-          // TODO: Add alert (is not a word)
-          break;
-
-        case messageType.result:
-          const result: Result = JSON.parse(message.data);
-          setResults((prev) => [...prev, result]);
+        case messageType.turn:
+          console.log(message.data);
+          setTurn(!!message.data);
 
           break;
       }
+    };
+
+    websocket.addEventListener("message", messageHandler);
+
+    return () => {
+      websocket.removeEventListener("message", messageHandler);
     };
   }, []);
 
@@ -46,6 +68,7 @@ const StartPage: React.FC = () => {
       };
 
       websocket.send(JSON.stringify(matchMessage));
+      setButton(true);
     }
   };
 
@@ -60,6 +83,7 @@ const StartPage: React.FC = () => {
     >
       <button
         onClick={onPlayClick}
+        disabled={button}
         style={{ border: "none", background: "none" }}
       >
         <div

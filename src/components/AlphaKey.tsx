@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { currentWordAtom } from "@/utils/atom";
+import { currentWordAtom, turnAtom } from "@/utils/atom";
 import { colorSet } from "@/utils/color";
 import { status, Status } from "@/utils/type";
 
@@ -9,6 +9,7 @@ interface AlphaKeyProps {
 }
 
 const AlphaKey: React.FC<AlphaKeyProps> = ({ char, stat }) => {
+  const [turn] = useAtom(turnAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
   const onKeyClick: React.MouseEventHandler = () => {
@@ -20,6 +21,7 @@ const AlphaKey: React.FC<AlphaKeyProps> = ({ char, stat }) => {
   return (
     <button
       onClick={onKeyClick}
+      disabled={!turn}
       style={{
         width: "43px",
         height: "58px",

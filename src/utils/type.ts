@@ -9,9 +9,9 @@ export const status = {
 
 export const messageType = {
   match: "match",
-  check: "word_check",
   guess: "guess",
   result: "result",
+  turn: "turn",
 } as const;
 
 export interface Message {
