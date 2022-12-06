@@ -1,5 +1,6 @@
 import Block from "@/components/Block";
 import { status } from "@/utils/type";
+import { numToStatus } from "@/utils/util";
 
 interface WordProps {
   word: string;
@@ -19,15 +20,7 @@ const Word: React.FC<WordProps> = ({ word, result }) => {
       {[...Array(5).keys()].map((i) => (
         <Block
           char={word[i] || ""}
-          stat={
-            result
-              ? result[i] === 0
-                ? status.miss
-                : result[i] === 1
-                ? status.ball
-                : status.hit
-              : status.none
-          }
+          stat={result ? numToStatus(result[i]) : status.none}
           key={word + i}
         />
       ))}

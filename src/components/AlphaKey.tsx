@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { currentWordAtom, turnAtom } from "@/utils/atom";
-import { colorSet } from "@/utils/color";
-import { status, Status } from "@/utils/type";
+import { keyboardBGColor, fontColor } from "@/utils/color";
+import { Status } from "@/utils/type";
 
 interface AlphaKeyProps {
   char: string;
@@ -12,7 +12,12 @@ const AlphaKey: React.FC<AlphaKeyProps> = ({ char, stat }) => {
   const [turn] = useAtom(turnAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
-  const onKeyClick: React.MouseEventHandler = () => {
+  const onKeyClick: React.MouseEventHandler<HTMLButtonElement> = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    event.currentTarget.blur();
+
     if (currentWord.length < 5) {
       setCurrentWord((prev) => prev + char);
     }
@@ -27,14 +32,7 @@ const AlphaKey: React.FC<AlphaKeyProps> = ({ char, stat }) => {
         height: "58px",
         border: "none",
         borderRadius: "4px",
-        background:
-          stat == status.hit
-            ? colorSet.green
-            : stat == status.ball
-            ? colorSet.yellow
-            : stat == status.miss
-            ? colorSet.darkGray
-            : colorSet.lightGray,
+        background: keyboardBGColor(stat),
         textAlign: "center",
       }}
     >
@@ -42,7 +40,7 @@ const AlphaKey: React.FC<AlphaKeyProps> = ({ char, stat }) => {
         style={{
           fontFamily: "Noto Sans",
           fontWeight: "bold",
-          color: stat == status.none ? colorSet.black : colorSet.white,
+          color: fontColor(stat, turn),
         }}
       >
         {char.toUpperCase()}

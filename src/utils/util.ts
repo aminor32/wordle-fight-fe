@@ -1,3 +1,5 @@
+import { status, Status } from "@/utils/type";
+
 export type KeyUnion<T> = keyof T;
 export type ValueUnion<T> = T[keyof T];
 
@@ -7,7 +9,23 @@ export const keyboard_1 = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"];
 export const keyboard_2 = ["a", "s", "d", "f", "g", "h", "j", "k", "l"];
 export const keyboard_3 = ["z", "x", "c", "v", "b", "n", "m"];
 
-export const wordCheck = (word: string, answer: string) => {
+export const numToStatus = (num: number): Status => {
+  switch (num) {
+    case 0:
+      return status.miss;
+
+    case 1:
+      return status.ball;
+
+    case 2:
+      return status.hit;
+
+    default:
+      return status.none;
+  }
+};
+
+export const wordCheck = (word: string, answer: string): number[] => {
   let result = [0, 0, 0, 0, 0];
   let tmp: { [key: string]: number } = {};
 
