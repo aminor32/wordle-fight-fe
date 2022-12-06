@@ -4,9 +4,8 @@ import AlphaKey from "@/components/AlphaKey";
 import FunctionKey from "@/components/FunctionKey";
 import Word from "@/components/Word";
 import { currentWordAtom, resultsAtom } from "@/utils/atom";
-import { status } from "@/utils/type";
-import { keyboard_1, keyboard_2, keyboard_3 } from "@/utils/util";
 import { useKeyboardHandler, usePlayPageMessageHandler } from "@/utils/hook";
+import { keyboard_1, keyboard_2, keyboard_3, numToStatus } from "@/utils/util";
 
 const PlayPage: React.FC = () => {
   const [results] = useAtom(resultsAtom);
@@ -61,56 +60,20 @@ const PlayPage: React.FC = () => {
 
       <div style={{ display: "flex", gap: "6px 6px", margin: "10px 0 4px 0" }}>
         {keyboard_1.map((char) => (
-          <AlphaKey
-            char={char}
-            stat={
-              keyboard[char] === -1
-                ? status.none
-                : keyboard[char] === 0
-                ? status.miss
-                : keyboard[char] === 1
-                ? status.ball
-                : status.hit
-            }
-            key={char}
-          />
+          <AlphaKey char={char} stat={numToStatus(keyboard[char])} key={char} />
         ))}
       </div>
 
       <div style={{ display: "flex", gap: "6px 6px", margin: "4px 0" }}>
         {keyboard_2.map((char) => (
-          <AlphaKey
-            char={char}
-            stat={
-              keyboard[char] === -1
-                ? status.none
-                : keyboard[char] === 0
-                ? status.miss
-                : keyboard[char] === 1
-                ? status.ball
-                : status.hit
-            }
-            key={char}
-          />
+          <AlphaKey char={char} stat={numToStatus(keyboard[char])} key={char} />
         ))}
       </div>
 
       <div style={{ display: "flex", gap: "6px 6px", margin: "4px 0" }}>
         <FunctionKey func="enter" />
         {keyboard_3.map((char) => (
-          <AlphaKey
-            char={char}
-            stat={
-              keyboard[char] === -1
-                ? status.none
-                : keyboard[char] === 0
-                ? status.miss
-                : keyboard[char] === 1
-                ? status.ball
-                : status.hit
-            }
-            key={char}
-          />
+          <AlphaKey char={char} stat={numToStatus(keyboard[char])} key={char} />
         ))}
         <FunctionKey func="del" />
       </div>

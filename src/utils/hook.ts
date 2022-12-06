@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router";
 import { useAtom } from "jotai";
 import {
   answerAtom,
@@ -10,7 +11,6 @@ import {
 } from "@/utils/atom";
 import { Message, messageType, Result } from "@/utils/type";
 import { alphabet, wordCheck } from "@/utils/util";
-import { useNavigate } from "react-router";
 
 export const useWebsocketConnectionHandler = () => {
   const [websocket] = useAtom(websocketAtom);

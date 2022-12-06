@@ -21,7 +21,12 @@ const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   const [answer] = useAtom(answerAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
-  const onKeyClick: React.MouseEventHandler = () => {
+  const onKeyClick: React.MouseEventHandler<HTMLButtonElement> = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+    event.currentTarget.blur();
+
     switch (func) {
       case "enter":
         if (currentWord.length === 5 && connected) {
@@ -61,7 +66,13 @@ const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
         textAlign: "center",
       }}
     >
-      <p style={{ fontFamily: "Noto Sans", fontWeight: "bold" }}>
+      <p
+        style={{
+          fontFamily: "Noto Sans",
+          fontWeight: "bold",
+          color: turn ? colorSet.black : colorSet.darkGray,
+        }}
+      >
         {func.toUpperCase()}
       </p>
     </button>

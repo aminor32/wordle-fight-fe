@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useAtom } from "jotai";
 import Block from "@/components/Block";
 import { websocketAtom } from "@/utils/atom";
-import { Message, messageType, status } from "@/utils/type";
 import {
   useStartPageMessageHandler,
   useWebsocketConnectionHandler,
 } from "@/utils/hook";
+import { Message, messageType, status } from "@/utils/type";
 
 const StartPage: React.FC = () => {
   const [websocket] = useAtom(websocketAtom);
