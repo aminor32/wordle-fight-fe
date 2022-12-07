@@ -1,7 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { useAtom } from "jotai";
+import Layout from "@/components/Layout";
 import GamePage from "@/pages/PlayPage";
 import StartPage from "@/pages/StartPage";
-import { useAtom } from "jotai";
 import { connectedAtom } from "@/utils/atom";
 
 const App: React.FC = () => {
@@ -10,14 +11,16 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<StartPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<StartPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
 
-        {connected ? (
-          <>
-            <Route path="/play" element={<GamePage />} />
-          </>
-        ) : null}
+          {connected ? (
+            <>
+              <Route path="/play" element={<GamePage />} />
+            </>
+          ) : null}
+        </Route>
       </Routes>
     </BrowserRouter>
   );
