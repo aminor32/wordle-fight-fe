@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import {
   answerAtom,
+  answerCheckAtom,
   connectedAtom,
   currentWordAtom,
   resultsAtom,
@@ -73,6 +74,7 @@ export const usePlayPageMessageHandler = (
   const [websocket] = useAtom(websocketAtom);
   const [, setTurn] = useAtom(turnAtom);
   const [answer] = useAtom(answerAtom);
+  const [, setAnswerCheck] = useAtom(answerCheckAtom);
   const [, setResults] = useAtom(resultsAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
   const [, setKeyboard] = keyboardState;
@@ -86,9 +88,10 @@ export const usePlayPageMessageHandler = (
           if (message.data) {
             const data: Result = JSON.parse(message.data);
 
+            const checkResult = wordCheck(data.word, answer);
             const result: Result = {
               word: data.word,
-              result: wordCheck(data.word, answer),
+              result: checkResult,
             };
             const messageToSend: Message = {
               type: messageType.result,
@@ -96,6 +99,29 @@ export const usePlayPageMessageHandler = (
             };
             websocket.send(JSON.stringify(messageToSend));
 
+            setAnswerCheck((prev) => {
+              const newAnswerCheck = [...prev];
+              const answerArray = answer.split("");
+
+              for (let i = 0; i < 5; i++) {
+                if (checkResult[i] === 2) {
+                  newAnswerCheck[i] = 2;
+                } else {
+                  const j = answerArray.findIndex(
+                    (char) => char === data.word[i]
+                  );
+
+                  if (j !== -1) {
+                    newAnswerCheck[j] = Math.max(
+                      newAnswerCheck[j],
+                      checkResult[i]
+                    );
+                  }
+                }
+              }
+
+              return newAnswerCheck;
+            });
             setResults((prev) => [...prev, data]);
             setKeyboard((prev) => {
               const newKeyboard = { ...prev };
@@ -156,6 +182,7 @@ export const useKeyboardHandler = () => {
   const [connected] = useAtom(connectedAtom);
   const [turn] = useAtom(turnAtom);
   const [answer] = useAtom(answerAtom);
+  const [, setAnswerCheck] = useAtom(answerCheckAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
 
   useEffect(() => {
@@ -168,9 +195,10 @@ export const useKeyboardHandler = () => {
         if (alphabet.includes(key) && currentWord.length < 5) {
           setCurrentWord((prev) => prev + key);
         } else if (key === "Enter" && currentWord.length === 5 && connected) {
+          const checkResult = wordCheck(currentWord, answer);
           const guess: Result = {
             word: currentWord,
-            result: wordCheck(currentWord, answer),
+            result: checkResult,
           };
           const message: Message = {
             type: messageType.guess,
@@ -178,6 +206,30 @@ export const useKeyboardHandler = () => {
           };
 
           websocket.send(JSON.stringify(message));
+
+          setAnswerCheck((prev) => {
+            const newAnswerCheck = [...prev];
+            const answerArray = answer.split("");
+
+            for (let i = 0; i < 5; i++) {
+              if (checkResult[i] === 2) {
+                newAnswerCheck[i] = 2;
+              } else {
+                const j = answerArray.findIndex(
+                  (char) => char === currentWord[i]
+                );
+
+                if (j !== -1) {
+                  newAnswerCheck[j] = Math.max(
+                    newAnswerCheck[j],
+                    checkResult[i]
+                  );
+                }
+              }
+            }
+
+            return newAnswerCheck;
+          });
         } else if (key == "Backspace") {
           setCurrentWord((prev) => prev.slice(0, -1));
         }
