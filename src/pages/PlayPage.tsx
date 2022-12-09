@@ -3,12 +3,20 @@ import { useAtom } from "jotai";
 import AlphaKey from "@/components/AlphaKey";
 import FunctionKey from "@/components/FunctionKey";
 import Word from "@/components/Word";
-import { currentWordAtom, resultsAtom } from "@/utils/atom";
+import {
+  answerAtom,
+  answerCheckAtom,
+  currentWordAtom,
+  resultsAtom,
+} from "@/utils/atom";
 import { useKeyboardHandler, usePlayPageMessageHandler } from "@/utils/hook";
 import { keyboard_1, keyboard_2, keyboard_3, numToStatus } from "@/utils/util";
+import { colorSet } from "@/utils/color";
 
 const PlayPage: React.FC = () => {
   const [results] = useAtom(resultsAtom);
+  const [answer] = useAtom(answerAtom);
+  const [answerCheck] = useAtom(answerCheckAtom);
   const [currentWord] = useAtom(currentWordAtom);
   const [keyboard, setKeyboard] = useState<{ [key: string]: number }>({
     a: -1,
@@ -46,6 +54,41 @@ const PlayPage: React.FC = () => {
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
+      <p
+        style={{
+          margin: "15px 0px 0px 0px",
+          fontFamily: "Noto Sans",
+          fontWeight: "normal",
+          fontSize: "14px",
+        }}
+      >
+        Opponent's answer is:
+      </p>
+      <p
+        style={{
+          margin: "5px 15px 15px 15px",
+          fontFamily: "Noto Sans",
+          fontWeight: "bold",
+          fontSize: "20px",
+          letterSpacing: "5px",
+        }}
+      >
+        {answer.split("").map((char, i) => (
+          <span
+            style={{
+              color:
+                answerCheck[i] === 0
+                  ? colorSet.black
+                  : answerCheck[i] === 1
+                  ? colorSet.yellow
+                  : colorSet.green,
+            }}
+          >
+            {char.toUpperCase()}
+          </span>
+        ))}
+      </p>
+
       {results.map((result) => (
         <Word word={result.word} result={result.result} key={result.word} />
       ))}
