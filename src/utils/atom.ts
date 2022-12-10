@@ -11,4 +11,4 @@ export const resultsAtom = atom<Result[]>([]);
 export const answerAtom = atom<string>("");
 export const answerCheckAtom = atom<number[]>([0, 0, 0, 0, 0]);
 export const turnAtom = atom<boolean>(false);
-export const notificationAtom = atom<string>("");
+export const outcomeAtom = atom<string>("");

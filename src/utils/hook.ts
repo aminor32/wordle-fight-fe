@@ -6,6 +6,7 @@ import {
   answerCheckAtom,
   connectedAtom,
   currentWordAtom,
+  outcomeAtom,
   resultsAtom,
   turnAtom,
   websocketAtom,
@@ -77,6 +78,7 @@ export const usePlayPageMessageHandler = (
   const [, setAnswerCheck] = useAtom(answerCheckAtom);
   const [, setResults] = useAtom(resultsAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
+  const [, setOutcome] = useAtom(outcomeAtom);
   const [, setKeyboard] = keyboardState;
 
   useEffect(() => {
@@ -98,6 +100,16 @@ export const usePlayPageMessageHandler = (
               data: JSON.stringify(result),
             };
             websocket.send(JSON.stringify(messageToSend));
+
+            if (
+              checkResult.reduce(
+                (acc, currentValue) => acc && currentValue === 2,
+                true
+              )
+            ) {
+              setOutcome("lose");
+              websocket.close();
+            }
 
             setAnswerCheck((prev) => {
               const newAnswerCheck = [...prev];
@@ -146,6 +158,15 @@ export const usePlayPageMessageHandler = (
         case messageType.result:
           const result: Result = JSON.parse(message.data);
 
+          if (
+            result.result.reduce(
+              (acc, currentValue) => acc && currentValue === 2,
+              true
+            )
+          ) {
+            setOutcome("win");
+            websocket.close();
+          }
           setCurrentWord("");
           setResults((prev) => [...prev, result]);
           setKeyboard((prev) => {
@@ -164,7 +185,6 @@ export const usePlayPageMessageHandler = (
           break;
 
         case messageType.turn:
-          console.log(message.data);
           setTurn(!!message.data);
       }
     };
@@ -184,12 +204,13 @@ export const useKeyboardHandler = () => {
   const [answer] = useAtom(answerAtom);
   const [, setAnswerCheck] = useAtom(answerCheckAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
+  const [outcome] = useAtom(outcomeAtom);
 
   useEffect(() => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
       event.preventDefault();
 
-      if (turn) {
+      if (turn && !outcome) {
         const key = event.key;
 
         if (alphabet.includes(key) && currentWord.length < 5) {

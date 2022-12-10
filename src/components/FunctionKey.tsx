@@ -4,6 +4,7 @@ import {
   answerCheckAtom,
   connectedAtom,
   currentWordAtom,
+  outcomeAtom,
   turnAtom,
   websocketAtom,
 } from "@/utils/atom";
@@ -22,6 +23,7 @@ const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   const [answer] = useAtom(answerAtom);
   const [, setAnswerCheck] = useAtom(answerCheckAtom);
   const [currentWord, setCurrentWord] = useAtom(currentWordAtom);
+  const [outcome] = useAtom(outcomeAtom);
 
   const onKeyClick: React.MouseEventHandler<HTMLButtonElement> = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -83,7 +85,7 @@ const FunctionKey: React.FC<FunctionKeyProps> = ({ func }) => {
   return (
     <button
       onClick={onKeyClick}
-      disabled={!turn}
+      disabled={!turn || !!outcome}
       style={{
         width: "65px",
         height: "58px",
