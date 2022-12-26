@@ -61,7 +61,9 @@ const PlayPage: React.FC = () => {
         "outcome-dialog"
       ) as HTMLDialogElement;
 
-      dialog!.showModal();
+      try {
+        dialog!.showModal();
+      } catch (error) {}
     }
   }, [outcome]);
 
@@ -71,9 +73,11 @@ const PlayPage: React.FC = () => {
         "connection-lost-dialog"
       ) as HTMLDialogElement;
 
-      dialog!.showModal();
+      try {
+        dialog!.showModal();
+      } catch (error) {}
     }
-  }, [connected]);
+  }, [outcome, connected]);
 
   return (
     <>
